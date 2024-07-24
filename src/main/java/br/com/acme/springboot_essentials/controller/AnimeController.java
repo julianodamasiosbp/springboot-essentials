@@ -1,6 +1,8 @@
 package br.com.acme.springboot_essentials.controller;
 
 import br.com.acme.springboot_essentials.domain.Anime;
+import br.com.acme.springboot_essentials.requests.AnimePostRequestBody;
+import br.com.acme.springboot_essentials.requests.AnimePutRequestBody;
 import br.com.acme.springboot_essentials.service.AnimeService;
 import br.com.acme.springboot_essentials.utils.DateUtil;
 import lombok.extern.log4j.Log4j2;
@@ -33,12 +35,12 @@ public class AnimeController {
     @GetMapping("/{id}")
     public ResponseEntity<Anime> findById(@PathVariable Long id){
         log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
-        return ResponseEntity.ok(animeService.findById(id));
+        return ResponseEntity.ok(animeService.findByIdOrThrowBadRequestException(id));
     }
 
     @PostMapping
-    public ResponseEntity<Anime> save(@RequestBody Anime anime){
-        Anime animeSalvo = animeService.save(anime);
+    public ResponseEntity<Anime> save(@RequestBody AnimePostRequestBody animePostRequestBody){
+        Anime animeSalvo = animeService.save(animePostRequestBody);
         return new ResponseEntity<>(animeSalvo, HttpStatus.CREATED);
     }
 
@@ -49,8 +51,8 @@ public class AnimeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> replace(@RequestBody Anime anime){
-        animeService.replace(anime);
+    public ResponseEntity<Void> replace(@RequestBody AnimePutRequestBody animePutRequestBody){
+        animeService.replace(animePutRequestBody);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
