@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: springboot-essentials
+
+server:
+  error:
+    include-stacktrace: always
