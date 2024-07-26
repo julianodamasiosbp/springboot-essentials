@@ -1,6 +1,6 @@
 package br.com.acme.springboot_essentials.service;
 
-import br.com.acme.springboot_essentials.AnimeRepository;
+import br.com.acme.springboot_essentials.repository.AnimeRepository;
 import br.com.acme.springboot_essentials.domain.Anime;
 import br.com.acme.springboot_essentials.mapper.AnimeMapper;
 import br.com.acme.springboot_essentials.requests.AnimePostRequestBody;
@@ -19,8 +19,11 @@ public class AnimeService {
     private final AnimeRepository animeRepository;
 
     public List<Anime> listAll() {
-
         return animeRepository.findAll();
+    }
+
+    public List<Anime> findByName(String name) {
+        return animeRepository.findByNameContaining(name);
     }
 
     public Anime findByIdOrThrowBadRequestException(Long id) {

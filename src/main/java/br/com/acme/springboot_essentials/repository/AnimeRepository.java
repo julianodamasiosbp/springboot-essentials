@@ -1,4 +1,4 @@
-package br.com.acme.springboot_essentials;
+package br.com.acme.springboot_essentials.repository;
 
 import br.com.acme.springboot_essentials.domain.Anime;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface AnimeRepository extends JpaRepository<Anime, Long> {
+    List<Anime> findByNameContaining(String name);
 }
