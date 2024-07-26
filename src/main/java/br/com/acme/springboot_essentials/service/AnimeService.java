@@ -1,5 +1,6 @@
 package br.com.acme.springboot_essentials.service;
 
+import br.com.acme.springboot_essentials.exception.BadRequestException;
 import br.com.acme.springboot_essentials.repository.AnimeRepository;
 import br.com.acme.springboot_essentials.domain.Anime;
 import br.com.acme.springboot_essentials.mapper.AnimeMapper;
@@ -28,8 +29,7 @@ public class AnimeService {
 
     public Anime findByIdOrThrowBadRequestException(Long id) {
         return animeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Anime not found"));
+                .orElseThrow(() -> new BadRequestException("Anime not found"));
     }
 
     public Anime save(AnimePostRequestBody animePostRequestBody) {
