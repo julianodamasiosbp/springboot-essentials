@@ -13,3 +13,9 @@ spring:
 server:
   error:
     include-stacktrace: always
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
