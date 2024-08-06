@@ -1,6 +1,7 @@
 package br.com.acme.springboot_essentials.repository;
 
 import br.com.acme.springboot_essentials.domain.Anime;
+import br.com.acme.springboot_essentials.util.AnimeCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class AnimeRepositoryTest {
     @Test
     @DisplayName("Save persists anime when successful")
     void save_PersistAnime_WhenSuccessful(){
-        Anime animeToBeSaved = createAnime();
+        Anime animeToBeSaved = AnimeCreator.createAnimeToBeSaved();
 
         Anime animeSaved = this.animeRepository.save(animeToBeSaved);
 
@@ -36,7 +37,7 @@ class AnimeRepositoryTest {
     @DisplayName("Save updates anime when successful")
     void update_PersistAnime_WhenSuccessful(){
 
-        Anime animeToBeSaved = createAnime();
+        Anime animeToBeSaved = AnimeCreator.createAnimeToBeSaved();
 
         Anime animeSaved = this.animeRepository.save(animeToBeSaved);
 
@@ -55,7 +56,7 @@ class AnimeRepositoryTest {
     @DisplayName("Delete removes anime when successful")
     void delete_RemovesAnime_WhenSuccessful(){
 
-        Anime animeToBeSaved = createAnime();
+        Anime animeToBeSaved = AnimeCreator.createAnimeToBeSaved();
 
         Anime animeSaved = this.animeRepository.save(animeToBeSaved);
 
@@ -70,7 +71,7 @@ class AnimeRepositoryTest {
     @DisplayName("Find By Name returns list of anime when successful")
     void findByName_ReturnsListOfAnime_WhenSuccessful(){
 
-        Anime animeToBeSaved = createAnime();
+        Anime animeToBeSaved = AnimeCreator.createAnimeToBeSaved();
 
         Anime animeSaved = this.animeRepository.save(animeToBeSaved);
 
@@ -87,7 +88,7 @@ class AnimeRepositoryTest {
     @DisplayName("Find By Name returns empty list when no anime is found")
     void findByName_ReturnsEmptyList_WhenAnimeIsNotFound(){
 
-        Anime animeToBeSaved = createAnime();
+        Anime animeToBeSaved = AnimeCreator.createAnimeToBeSaved();
 
         Anime animeSaved = this.animeRepository.save(animeToBeSaved);
 
@@ -95,10 +96,6 @@ class AnimeRepositoryTest {
 
         Assertions.assertThat(animes).isEmpty();
         Assertions.assertThat(animes).doesNotContain(animeSaved);
-    }
-
-    private Anime createAnime(){
-        return Anime.builder().name("Anime Test").build();
     }
 
     @Test

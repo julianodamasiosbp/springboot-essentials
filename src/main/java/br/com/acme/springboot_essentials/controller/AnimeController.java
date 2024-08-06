@@ -31,25 +31,25 @@ public class AnimeController {
 
     @GetMapping("all")
     public ResponseEntity<List<Anime>> list(){
-       log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
+       //log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
         return ResponseEntity.ok(animeService.listAllNonPageable());
     }
 
     @GetMapping()
     public ResponseEntity<Page<Anime>> list(Pageable pageable){
-        log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
+        //log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
         return ResponseEntity.ok(animeService.listAll(pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Anime> findById(@PathVariable Long id){
-        log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
+        //log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
         return ResponseEntity.ok(animeService.findByIdOrThrowBadRequestException(id));
     }
 
     @GetMapping("/find")
     public ResponseEntity<List<Anime>> findByName(@RequestParam String name){
-        log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
+        //log.info(dateUtil.formatLocalDateTimetoDatabaseStyle(LocalDateTime.now()));
         return ResponseEntity.ok(animeService.findByName(name));
     }
 
