@@ -1,5 +1,7 @@
 package br.com.acme.springboot_essentials.config;
 
+import br.com.acme.springboot_essentials.service.AcmeUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,7 +15,10 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 @Log4j2
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final AcmeUserDetailsService acmeUserDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -26,6 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .formLogin()
+                .and()
                 .httpBasic();
     }
 
@@ -33,14 +40,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories
                 .createDelegatingPasswordEncoder();
-        log.info("Password Encoder {}", passwordEncoder.encode("test"));
+        log.info("Password Encoder {}", passwordEncoder.encode("acme"));
         auth.inMemoryAuthentication()
-                .withUser("juliano")
+                .withUser("juliano2")
                 .password(passwordEncoder.encode("acme"))
                 .roles("USER", "ADMIN")
                 .and()
-                .withUser("acme")
+                .withUser("acme2")
                 .password(passwordEncoder.encode("acme"))
                 .roles("USER");
+
+        auth.userDetailsService(acmeUserDetailsService)
+                .passwordEncoder(passwordEncoder);
     }
 }
