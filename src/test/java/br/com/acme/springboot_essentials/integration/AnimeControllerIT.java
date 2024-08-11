@@ -49,6 +49,22 @@ public class AnimeControllerIT {
     @Autowired
     private AcmeUserRepository acmeUserRepository;
 
+    private static final AcmeUser USER = AcmeUser
+            .builder()
+            .name("Acme Corp")
+                .username("acmecorp")
+                .password("$2a$10$NjR3keMSY/YqB1TvWwPOF..WG5FA3Ux4LXTo9W/vK1gnebBAybnsm")
+                .authorities("ROLE_USER")
+                .build();
+
+    private static final AcmeUser ADMIN = AcmeUser
+            .builder()
+            .name("Juliano")
+            .username("juliano")
+            .password("$2a$10$NjR3keMSY/YqB1TvWwPOF..WG5FA3Ux4LXTo9W/vK1gnebBAybnsm")
+            .authorities("ROLE_USER,ROLE_ADMIN")
+            .build();
+
     @TestConfiguration
     @Lazy
     static class Config {
@@ -57,7 +73,14 @@ public class AnimeControllerIT {
         public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
                     .rootUri("http://localhost:" + port)
-                    .basicAuthentication("teste", "senha");
+                    .basicAuthentication("acmecorp", "senha");
+            return new TestRestTemplate(restTemplateBuilder);
+        }
+        @Bean(name = "testRestTemplateRoleAdmin")
+        public TestRestTemplate testRestTemplateRoleAdminCreator(@Value("${local.server.port}") int port) {
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
+                    .rootUri("http://localhost:" + port)
+                    .basicAuthentication("juliano", "senha");
             return new TestRestTemplate(restTemplateBuilder);
         }
 
@@ -68,15 +91,7 @@ public class AnimeControllerIT {
     void list_ReturnsListOfAnimesInsidePageObject_WhenSuccessful(){
         Anime animeSaved = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
-        AcmeUser user = AcmeUser
-                .builder()
-                .name("teste")
-                .username("teste")
-                .password("$2a$10$NjR3keMSY/YqB1TvWwPOF..WG5FA3Ux4LXTo9W/vK1gnebBAybnsm")
-                .authorities("ROLE_USER")
-                .build();
-
-        acmeUserRepository.save(user);
+        acmeUserRepository.save(USER);
         String expectedName = animeSaved.getName();
 
         PageableResponse<Anime> animePage = testRestTemplate.exchange("/animes", HttpMethod.GET, null,
