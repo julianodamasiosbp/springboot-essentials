@@ -1,6 +1,8 @@
 package br.com.acme.springboot_essentials.integration;
 
+import br.com.acme.springboot_essentials.domain.AcmeUser;
 import br.com.acme.springboot_essentials.domain.Anime;
+import br.com.acme.springboot_essentials.repository.AcmeUserRepository;
 import br.com.acme.springboot_essentials.repository.AnimeRepository;
 import br.com.acme.springboot_essentials.requests.AnimePostRequestBody;
 import br.com.acme.springboot_essentials.util.AnimeCreator;
@@ -10,10 +12,16 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -29,19 +37,46 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AnimeControllerIT {
     @Autowired
+    @Qualifier(value = "testRestTemplateRoleUser")
     private TestRestTemplate testRestTemplate;
 
-    @LocalServerPort
-    private int port;
+//    @LocalServerPort
+//    private int port;
 
     @Autowired
     private AnimeRepository animeRepository;
+
+    @Autowired
+    private AcmeUserRepository acmeUserRepository;
+
+    @TestConfiguration
+    @Lazy
+    static class Config {
+
+        @Bean(name = "testRestTemplateRoleUser")
+        public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
+                    .rootUri("http://localhost:" + port)
+                    .basicAuthentication("teste", "senha");
+            return new TestRestTemplate(restTemplateBuilder);
+        }
+
+    }
 
     @Test
     @DisplayName("List returns list of anime inside page object when successful")
     void list_ReturnsListOfAnimesInsidePageObject_WhenSuccessful(){
         Anime animeSaved = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
+        AcmeUser user = AcmeUser
+                .builder()
+                .name("teste")
+                .username("teste")
+                .password("$2a$10$NjR3keMSY/YqB1TvWwPOF..WG5FA3Ux4LXTo9W/vK1gnebBAybnsm")
+                .authorities("ROLE_USER")
+                .build();
+
+        acmeUserRepository.save(user);
         String expectedName = animeSaved.getName();
 
         PageableResponse<Anime> animePage = testRestTemplate.exchange("/animes", HttpMethod.GET, null,
